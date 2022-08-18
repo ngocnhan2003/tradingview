@@ -1,0 +1,25 @@
+//@version=5
+// ©ngocnhan2003
+
+indicator('From Entry:', overlay=true)
+
+truncate(number, decimals) =>
+    factor = math.pow(10, decimals)
+    int(number * factor) / factor
+
+entry = input.float(title='From Entry', defval=12.625, minval=0, maxval=1000)
+amount = input.float(title='Amount', defval=0)
+
+hline(price=entry, title='Entry', color=color.yellow, linestyle=hline.style_dashed, linewidth=0, editable=true)
+
+percent = truncate((close - entry) / entry * 100, 2)
+percent_str = str.tostring(truncate(amount * percent / 100, 2)) + ' (' + str.tostring(percent) + '%)'
+
+green = #5ea152
+red = #ba2b0f
+
+l = label.new(bar_index, na, percent_str, textcolor=color.white, color=close >= entry ? green : red, style=close >= entry ? label.style_label_down : label.style_label_up, yloc=close >= entry ? yloc.abovebar : yloc.belowbar)
+
+label.delete(l[1])
+
+plot(percent, color=percent >= 0 ? green : red, show_last=1)
